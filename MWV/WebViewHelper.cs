@@ -63,7 +63,7 @@ namespace MWV
 			RawImage component = renderingObject.GetComponent<RawImage>();
 			if (component != null)
 			{
-				component.set_texture(texture);
+				component.texture = (texture);
 				return;
 			}
 			MeshRenderer meshRenderer = renderingObject.GetComponent<MeshRenderer>();
@@ -90,10 +90,10 @@ namespace MWV
 			{
 				return Color.black;
 			}
-			long num = (long)0;
-			long num1 = (long)0;
-			long num2 = (long)0;
-			long num3 = (long)0;
+			ulong num = (long)0;
+			ulong num1 = (long)0;
+			ulong num2 = (long)0;
+			ulong num3 = (long)0;
 			int length = (int)frameBuffer.Length / 4;
 			if (length <= 0 || length % 4 != 0)
 			{
@@ -106,7 +106,7 @@ namespace MWV
 				num2 += (ulong)frameBuffer[i + 2];
 				num3 += (ulong)frameBuffer[i + 3];
 			}
-			return new Color((float)(num / (long)length), (float)(num1 / (long)length), (float)(num2 / (long)length), (float)(num3 / (long)length));
+			return new Color((float)(num / (ulong)length), (float)(num1 / (ulong)length), (float)(num2 / (ulong)length), (float)(num3 / (ulong)length));
 		}
 
 		public static string GetDeviceRootPath()
@@ -177,9 +177,9 @@ namespace MWV
 			{
 				return Vector2.zero;
 			}
-			Rect _rectTransform = rawImage.get_rectTransform().rect;
+			Rect _rectTransform = rawImage.rectTransform.rect;
 			float single = _rectTransform.width;
-			_rectTransform = rawImage.get_rectTransform().rect;
+            _rectTransform = rawImage.rectTransform.rect;
 			return new Vector2(single, _rectTransform.height);
 		}
 

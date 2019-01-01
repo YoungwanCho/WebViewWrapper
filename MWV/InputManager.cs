@@ -241,7 +241,7 @@ namespace MWV
 						{
 							if (this._inputSystem == MWV.InputSystem.VR)
 							{
-								targetInfo1.SendEventTrigger(1);
+								targetInfo1.SendEventTrigger(EventTriggerType.PointerExit);
 							}
 							this._inputType = InputTypes.Empty;
 							this._inputPhase = InputPhases.Empty;
@@ -344,7 +344,7 @@ namespace MWV
 								if (single5 >= 1f)
 								{
 									this._inputType = InputTypes.Click;
-									targetInfo1.SendEventTrigger(15);
+									targetInfo1.SendEventTrigger(EventTriggerType.Submit);
 									if (targetInfo1.InputManager != null)
 									{
 										targetInfo1.InputManager.OnInputClick(targetInfo1.Object, targetInfo1.Coords);
@@ -369,7 +369,7 @@ namespace MWV
 								{
 									this._inputType = InputTypes.Click;
 									InputManager.TargetInfo targetInfo3 = targetInfo1;
-									targetInfo3.SendEventTrigger(15);
+									targetInfo3.SendEventTrigger(EventTriggerType.Submit);
 									if (this._inputSystem == MWV.InputSystem.Touch && !this._touchController)
 									{
 										targetInfo3 = targetInfo;
@@ -645,17 +645,17 @@ namespace MWV
 					this._inputManager = cachedData._inputManager;
 					this._eventSystem = cachedData._eventSystem;
 				}
-				this._pointerData = new PointerEventData(EventSystem.get_current());
+				this._pointerData = new PointerEventData(EventSystem.current);
 				if (!position.HasValue)
 				{
-					this._pointerData.set_position(camera.WorldToScreenPoint(cameraTransform.position + (cameraTransform.forward * camera.farClipPlane)));
+					this._pointerData.position = (camera.WorldToScreenPoint(cameraTransform.position + (cameraTransform.forward * camera.farClipPlane)));
 				}
 				else
 				{
-					this._pointerData.set_position(position.Value);
+					this._pointerData.position = (position.Value);
 				}
 				List<RaycastResult> raycastResults = new List<RaycastResult>();
-				EventSystem.get_current().RaycastAll(this._pointerData, raycastResults);
+				EventSystem.current.RaycastAll(this._pointerData, raycastResults);
 				if (raycastResults.Count <= 0)
 				{
 					ray = (!position.HasValue ? new Ray(cameraTransform.position, cameraTransform.forward) : camera.ScreenPointToRay(position.Value));
@@ -666,7 +666,7 @@ namespace MWV
 							this._object = raycastHit.transform.gameObject;
 							this._tranform = this._object.transform;
 							this._inputManager = this._object.GetComponent<IInputManagerHandler>();
-							this.SendEventTrigger(1);
+							this.SendEventTrigger(EventTriggerType.PointerExit);
 							this._eventSystem = null;
 						}
 						this._normal = raycastHit.normal;
@@ -684,12 +684,12 @@ namespace MWV
 				else
 				{
 					RaycastResult item = raycastResults[0];
-					if (this._object != item.get_gameObject())
+					if (this._object != item.gameObject)
 					{
-						this._object = item.get_gameObject();
+                        this._object = item.gameObject;
 						this._tranform = this._object.GetComponent<RectTransform>();
 						this._inputManager = this._object.GetComponent<IInputManagerHandler>();
-						this.SendEventTrigger(1);
+						this.SendEventTrigger(EventTriggerType.PointerExit);
 						for (GameObject i = this._object; i.transform.parent != null; i = i.transform.parent.gameObject)
 						{
 							this._eventSystem = i.GetComponent<IEventSystemHandler>();
@@ -727,19 +727,19 @@ namespace MWV
 			{
 				if (this._pointerData != null)
 				{
-					if (e == 1 && this._eventSystem is IPointerExitHandler)
+					if (e == EventTriggerType.PointerExit && this._eventSystem is IPointerExitHandler)
 					{
 						(this._eventSystem as IPointerExitHandler).OnPointerExit(this._pointerData);
 					}
-					if (e == null && this._eventSystem is IPointerEnterHandler)
+					if (e == EventTriggerType.PointerEnter && this._eventSystem is IPointerEnterHandler)
 					{
 						(this._eventSystem as IPointerEnterHandler).OnPointerEnter(this._pointerData);
 					}
-					if (e == 4 && this._eventSystem is IPointerClickHandler)
+					if (e == EventTriggerType.PointerClick && this._eventSystem is IPointerClickHandler)
 					{
 						(this._eventSystem as IPointerClickHandler).OnPointerClick(this._pointerData);
 					}
-					if (e == 15 && this._eventSystem is ISubmitHandler)
+					if (e == EventTriggerType.Submit && this._eventSystem is ISubmitHandler)
 					{
 						(this._eventSystem as ISubmitHandler).OnSubmit(this._pointerData);
 					}
