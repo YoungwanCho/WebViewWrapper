@@ -34,10 +34,10 @@
       <HintPath>.\WebViewReferences\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>C:\Program Files\Unity2018.2.14.f1\Editor\Data\UnityExtensions\Unity\GUISystem\Standalone\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Plugins\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

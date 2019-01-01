@@ -11,10 +11,10 @@
 	- VisualStudio.15.Release/15.9.4+28307.222
 	- Microsoft .NET Framework 버전 4.7.03056
 
-### 참조 (프로젝트의 외부 참조 세팅)
-- 유니티 설치 폴더에서 해당 경로의 dll를 참조 추가해야 합니다.
-- UnityEngine.Ui.dll - Editor\Data\UnityExtensions\Unity\GUISystem\Standalone
-- UnityEngine.dll - Editor\Data\Managed
+### 외부 플러그인 참조
+- 프로젝트의 Plugins 폴더 안에 2가지 유니티 플러그인을 참조합니다
+- UnityEngine.Ui.dll
+- UnityEngine.dll
 
 ### 빌드 방법
 - 비주얼 스튜디오의 상단 메뉴 -> 빌드 -> 솔루션 빌드
