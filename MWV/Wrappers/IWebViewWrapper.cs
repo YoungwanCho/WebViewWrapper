@@ -27,6 +27,8 @@ namespace MWV.Wrappers
 
 		void WebSetInputText(IntPtr wObj, string text);
 
+        void WebCallFunction(IntPtr wObj, string functionName);
+
 		void WebSetUrl(IntPtr wObj, string url);
 
 		void WebShowKeyboard(IntPtr wObj, bool state);

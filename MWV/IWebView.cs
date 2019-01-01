@@ -81,6 +81,8 @@ namespace MWV
 
 		void SetInputText(string text);
 
+        void CallFunction(string functionName);
+
 		void UnLoad(bool resetTexture);
 
 		void UnLoad();

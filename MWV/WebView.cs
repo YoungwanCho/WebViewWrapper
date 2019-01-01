@@ -282,5 +282,10 @@ namespace MWV
 		{
 			this.UnLoad(true);
 		}
-	}
+
+        public void CallFunction(string functionName)
+        {
+            _webView.CallFunction(functionName);
+        }
+    }
 }

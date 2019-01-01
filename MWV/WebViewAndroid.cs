@@ -491,5 +491,13 @@ namespace MWV
 				this._pluginObj.Call("exportUpdateSurfaceTexture", new object[0]);
 			}
 		}
-	}
+
+        public void CallFunction(string functionName)
+        {
+            if (this._pluginObj != null)
+            {
+                this._pluginObj.Call("exportCallFunction", new object[] { functionName });
+            }
+        }
+    }
 }

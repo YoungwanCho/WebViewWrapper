@@ -208,5 +208,9 @@ namespace MWV.Wrappers
 		{
 			WrapperInternal.MWVShowKeyboard(wObj, state);
 		}
-	}
+
+        public void WebCallFunction(IntPtr wObj, string functionName)
+        {
+        }
+    }
 }

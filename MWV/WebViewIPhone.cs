@@ -412,5 +412,10 @@ namespace MWV
 				yield return null;
 			}
 		}
-	}
+
+        public void CallFunction(string functionName)
+        {
+            //throw new NotImplementedException();
+        }
+    }
 }

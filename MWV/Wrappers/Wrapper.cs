@@ -167,5 +167,10 @@ namespace MWV.Wrappers
 		{
 			this._webViewWrapper.WebShowKeyboard(wObj, state);
 		}
-	}
+
+        public void WebCallFunction(IntPtr wObj, string functionName)
+        {
+            this._webViewWrapper.WebCallFunction(wObj, functionName);
+        }
+    }
 }
