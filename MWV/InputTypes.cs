@@ -1,12 +1,10 @@
-using System;
-
 namespace MWV
 {
-	public enum InputTypes
-	{
-		Empty,
-		Click,
-		Move,
-		Swipe
-	}
+    public enum InputTypes
+    {
+        Empty,
+        Click,
+        Move,
+        Swipe
+    }
 }

@@ -1,9 +1,7 @@
-using System;
-
 namespace MWV
 {
-	public interface IWebPageLoadingListener
-	{
-		void OnWebPageLoading(int progress);
-	}
+    public interface IWebPageLoadingListener
+    {
+        void OnWebPageLoading(int progress);
+    }
 }

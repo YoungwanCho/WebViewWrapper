@@ -1,12 +1,10 @@
-using System;
-
 namespace MWV
 {
-	public enum InputPhases
-	{
-		Empty,
-		Began,
-		Pressed,
-		Ended
-	}
+    public enum InputPhases
+    {
+        Empty,
+        Began,
+        Pressed,
+        Ended
+    }
 }

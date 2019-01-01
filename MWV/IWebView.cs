@@ -3,88 +3,88 @@ using UnityEngine;
 
 namespace MWV
 {
-	internal interface IWebView
-	{
-		int ContentHeight
-		{
-			get;
-		}
+    internal interface IWebView
+    {
+        int ContentHeight
+        {
+            get;
+        }
 
-		bool DeviceKeyboard
-		{
-			set;
-		}
+        bool DeviceKeyboard
+        {
+            set;
+        }
 
-		WebViewManagerEvents EventManager
-		{
-			get;
-		}
+        WebViewManagerEvents EventManager
+        {
+            get;
+        }
 
-		byte[] FramePixels
-		{
-			get;
-		}
+        byte[] FramePixels
+        {
+            get;
+        }
 
-		int Height
-		{
-			get;
-		}
+        int Height
+        {
+            get;
+        }
 
-		bool IsReady
-		{
-			get;
-		}
+        bool IsReady
+        {
+            get;
+        }
 
-		GameObject OutputObject
-		{
-			get;
-			set;
-		}
+        GameObject OutputObject
+        {
+            get;
+            set;
+        }
 
-		WebStates State
-		{
-			get;
-		}
+        WebStates State
+        {
+            get;
+        }
 
-		object StateValue
-		{
-			get;
-		}
+        object StateValue
+        {
+            get;
+        }
 
-		Uri Url
-		{
-			get;
-		}
+        Uri Url
+        {
+            get;
+        }
 
-		int Width
-		{
-			get;
-		}
+        int Width
+        {
+            get;
+        }
 
-		void AddWebListener(IWebListener listener);
+        void AddWebListener(IWebListener listener);
 
-		void ClickTo(int x, int y);
+        void ClickTo(int x, int y);
 
-		void Load(Uri url);
+        void Load(Uri url);
 
-		void Load(string data);
+        void Load(string data);
 
-		bool MoveBack();
+        bool MoveBack();
 
-		bool MoveForward();
+        bool MoveForward();
 
-		void Release();
+        void Release();
 
-		void RemoveWebListener(IWebListener listener);
+        void RemoveWebListener(IWebListener listener);
 
-		void ScrollBy(int x, int y);
+        void ScrollBy(int x, int y);
 
-		void SetInputText(string text);
+        void SetInputText(string text);
 
         void CallFunction(string functionName);
 
-		void UnLoad(bool resetTexture);
+        void UnLoad(bool resetTexture);
 
-		void UnLoad();
-	}
+        void UnLoad();
+    }
 }

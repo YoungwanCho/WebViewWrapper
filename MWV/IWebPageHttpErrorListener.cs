@@ -1,9 +1,7 @@
-using System;
-
 namespace MWV
 {
-	public interface IWebPageHttpErrorListener
-	{
-		void OnWebPageHttpError();
-	}
+    public interface IWebPageHttpErrorListener
+    {
+        void OnWebPageHttpError();
+    }
 }

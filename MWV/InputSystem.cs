@@ -1,11 +1,9 @@
-using System;
-
 namespace MWV
 {
-	public enum InputSystem
-	{
-		Empty,
-		Touch,
-		VR
-	}
+    public enum InputSystem
+    {
+        Empty,
+        Touch,
+        VR
+    }
 }

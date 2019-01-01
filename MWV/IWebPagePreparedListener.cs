@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 
 namespace MWV
 {
-	public interface IWebPagePreparedListener
-	{
-		void OnWebPagePrepared(Texture2D videoTexture);
-	}
+    public interface IWebPagePreparedListener
+    {
+        void OnWebPagePrepared(Texture2D videoTexture);
+    }
 }
