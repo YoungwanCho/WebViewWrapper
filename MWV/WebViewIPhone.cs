@@ -410,7 +410,7 @@ namespace MWV
             }
         }
 
-        public void CallFunction(string functionName)
+        public void CallFunction(string functionName, params string[] args)
         {
             //throw new NotImplementedException();
         }
