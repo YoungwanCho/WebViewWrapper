@@ -228,9 +228,9 @@ namespace MWV
             }
         }
 
-        public void CallFunction(string functionName)
+        public void CallFunction(string functionName, params string[] args)
         {
-            _webView.CallFunction(functionName);
+            _webView.CallFunction(functionName); _webView.CallFunction(functionName, args);
         }
     }
 }

@@ -432,11 +432,11 @@ namespace MWV
             }
         }
 
-        public void CallFunction(string functionName)
+        public void CallFunction(string functionName, params string[] args)
         {
             if (this._pluginObj != null)
             {
-                this._pluginObj.Call("exportCallFunction", new object[] { functionName });
+                this._pluginObj.Call("exportCallFunction", new object[] { functionName, args });
             }
         }
     }
