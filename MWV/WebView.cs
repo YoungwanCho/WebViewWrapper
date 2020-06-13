@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace MWV
@@ -6,96 +6,36 @@ namespace MWV
     public class WebView : IWebView
     {
         private object _webViewObject;
-
         private IWebView _webView;
 
-        public int ContentHeight
+        public WebView(MonoBehaviour monoObject, GameObject outputObject)
+          : this(monoObject, outputObject, new Vector2((float)Screen.width, (float)Screen.height))
         {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return 0;
-                }
-                return this._webView.ContentHeight;
-            }
         }
 
-        public bool DeviceKeyboard
+        public WebView(MonoBehaviour monoObject, GameObject outputObject, Vector2 size)
         {
-            set
+            if (WebViewHelper.IsSupportedPlatform)
             {
-                if (this._webView != null)
+                if ((double)size.x <= 0.0 || (double)size.y <= 0.0)
                 {
-                    this._webView.DeviceKeyboard = value;
+                    Debug.LogWarning((object)"Unsupported size (width <= 0, height <= 0): will be use device screen size by default");
+                    size = new Vector2((float)Screen.width, (float)Screen.height);
                 }
+                if (WebViewHelper.IsAndroidPlatform)
+                    this._webViewObject = (object)new WebViewAndroid(monoObject, outputObject, size);
+                if (WebViewHelper.IsIPhonePlatform)
+                    this._webViewObject = (object)new WebViewIPhone(monoObject, outputObject, size);
             }
-        }
-
-        public WebViewManagerEvents EventManager
-        {
-            get
+            if (this._webViewObject == null)
             {
-                if (this._webView == null)
-                {
-                    return null;
-                }
-                return this._webView.EventManager;
+                Debug.LogWarning((object)"This platform is unsupported for MWV asset, all functionality will be ignored!");
             }
-        }
-
-        public byte[] FramePixels
-        {
-            get
+            else
             {
-                if (this._webView == null)
-                {
-                    return null;
-                }
-                return this._webView.FramePixels;
-            }
-        }
-
-        public int Height
-        {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return 0;
-                }
-                return this._webView.Height;
-            }
-        }
-
-        public bool IsReady
-        {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return false;
-                }
-                return this._webView.IsReady;
-            }
-        }
-
-        public GameObject OutputObject
-        {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return null;
-                }
-                return this._webView.OutputObject;
-            }
-            set
-            {
-                if (this._webView != null)
-                {
-                    this._webView.OutputObject = value;
-                }
+                if (!(this._webViewObject is IWebView))
+                    return;
+                this._webView = this._webViewObject as IWebView;
             }
         }
 
@@ -107,15 +47,33 @@ namespace MWV
             }
         }
 
+        public GameObject OutputObject
+        {
+            get
+            {
+                return this._webView != null ? this._webView.OutputObject : (GameObject)null;
+            }
+            set
+            {
+                if (this._webView == null)
+                    return;
+                this._webView.OutputObject = value;
+            }
+        }
+
+        public WebViewManagerEvents EventManager
+        {
+            get
+            {
+                return this._webView != null ? this._webView.EventManager : (WebViewManagerEvents)null;
+            }
+        }
+
         public WebStates State
         {
             get
             {
-                if (this._webView == null)
-                {
-                    return WebStates.Empty;
-                }
-                return this._webView.State;
+                return this._webView != null ? this._webView.State : WebStates.Empty;
             }
         }
 
@@ -123,159 +81,43 @@ namespace MWV
         {
             get
             {
-                if (this._webView == null)
-                {
-                    return null;
-                }
-                return this._webView.StateValue;
-            }
-        }
-
-        public Uri Url
-        {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return null;
-                }
-                return this._webView.Url;
-            }
-        }
-
-        public int Width
-        {
-            get
-            {
-                if (this._webView == null)
-                {
-                    return 0;
-                }
-                return this._webView.Width;
-            }
-        }
-
-        public WebView(MonoBehaviour monoObject, GameObject outputObject) : this(monoObject, outputObject, new Vector2((float)Screen.width, (float)Screen.height))
-        {
-        }
-
-        public WebView(MonoBehaviour monoObject, GameObject outputObject, Vector2 size)
-        {
-            if (WebViewHelper.IsSupportedPlatform)
-            {
-                if (size.x <= 0f || size.y <= 0f)
-                {
-                    Debug.LogWarning("Unsupported size (width <= 0, height <= 0): will be use device screen size by default");
-                    size = new Vector2((float)Screen.width, (float)Screen.height);
-                }
-                if (WebViewHelper.IsAndroidPlatform)
-                {
-                    this._webViewObject = new WebViewAndroid(monoObject, outputObject, size);
-                }
-                if (WebViewHelper.IsIPhonePlatform)
-                {
-                    this._webViewObject = new WebViewIPhone(monoObject, outputObject, size);
-                }
-            }
-            if (this._webViewObject == null)
-            {
-                Debug.LogWarning("This platform is unsupported for MWV asset, all functionality will be ignored!");
-                return;
-            }
-            if (this._webViewObject is IWebView)
-            {
-                this._webView = this._webViewObject as IWebView;
+                return this._webView != null ? this._webView.StateValue : (object)null;
             }
         }
 
         public void AddWebListener(IWebListener listener)
         {
-            if (this._webView != null)
-            {
-                this._webView.AddWebListener(listener);
-            }
-        }
-
-        public void ClickTo(int x, int y)
-        {
-            if (this._webView != null)
-            {
-                this._webView.ClickTo(x, y);
-            }
-        }
-
-        public void Load(Uri url)
-        {
-            if (this._webView != null)
-            {
-                this._webView.Load(url);
-            }
-        }
-
-        public void Load(string data)
-        {
-            if (this._webView != null)
-            {
-                this._webView.Load(data);
-            }
-        }
-
-        public bool MoveBack()
-        {
             if (this._webView == null)
-            {
-                return false;
-            }
-            return this._webView.MoveBack();
-        }
-
-        public bool MoveForward()
-        {
-            if (this._webView == null)
-            {
-                return false;
-            }
-            return this._webView.MoveForward();
-        }
-
-        public void Release()
-        {
-            if (this._webView != null)
-            {
-                this._webView.Release();
-            }
+                return;
+            this._webView.AddWebListener(listener);
         }
 
         public void RemoveWebListener(IWebListener listener)
         {
-            if (this._webView != null)
-            {
-                this._webView.RemoveWebListener(listener);
-            }
+            if (this._webView == null)
+                return;
+            this._webView.RemoveWebListener(listener);
         }
 
-        public void ScrollBy(int x, int y)
+        public void Load(Uri url)
         {
-            if (this._webView != null)
-            {
-                this._webView.ScrollBy(x, y);
-            }
+            if (this._webView == null)
+                return;
+            this._webView.Load(url);
         }
 
-        public void SetInputText(string text)
+        public void Load(string data)
         {
-            if (this._webView != null)
-            {
-                this._webView.SetInputText(text);
-            }
+            if (this._webView == null)
+                return;
+            this._webView.Load(data);
         }
 
         public void UnLoad(bool resetTexture)
         {
-            if (this._webView != null)
-            {
-                this._webView.UnLoad(resetTexture);
-            }
+            if (this._webView == null)
+                return;
+            this._webView.UnLoad(resetTexture);
         }
 
         public void UnLoad()
@@ -283,9 +125,107 @@ namespace MWV
             this.UnLoad(true);
         }
 
-        public void CallFunction(string functionName, params string[] args)
+        public void Release()
         {
-            _webView.CallFunction(functionName, args);
+            if (this._webView == null)
+                return;
+            this._webView.Release();
+        }
+
+        public Uri Url
+        {
+            get
+            {
+                return this._webView != null ? this._webView.Url : (Uri)null;
+            }
+        }
+
+        public bool MoveForward()
+        {
+            return this._webView != null && this._webView.MoveForward();
+        }
+
+        public bool MoveBack()
+        {
+            return this._webView != null && this._webView.MoveBack();
+        }
+
+        public void SetInputText(string text)
+        {
+            if (this._webView == null)
+                return;
+            this._webView.SetInputText(text);
+        }
+
+        public void SetMotionEvent(MotionActions action, float x, float y)
+        {
+            if (this._webView == null)
+                return;
+            this._webView.SetMotionEvent(action, x, y);
+        }
+
+        public void ClickTo(int x, int y)
+        {
+            if (this._webView == null)
+                return;
+            this._webView.ClickTo(x, y);
+        }
+
+        public void ScrollBy(int x, int y, float scrollTime = 0.5f)
+        {
+            if (this._webView == null)
+                return;
+            this._webView.ScrollBy(x, y, scrollTime);
+        }
+
+        public bool IsReady
+        {
+            get
+            {
+                return this._webView != null && this._webView.IsReady;
+            }
+        }
+
+        public byte[] FramePixels
+        {
+            get
+            {
+                return this._webView != null ? this._webView.FramePixels : (byte[])null;
+            }
+        }
+
+        public bool DeviceKeyboard
+        {
+            set
+            {
+                if (this._webView == null)
+                    return;
+                this._webView.DeviceKeyboard = value;
+            }
+        }
+
+        public int Width
+        {
+            get
+            {
+                return this._webView != null ? this._webView.Width : 0;
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return this._webView != null ? this._webView.Height : 0;
+            }
+        }
+
+        public int ContentHeight
+        {
+            get
+            {
+                return this._webView != null ? this._webView.ContentHeight : 0;
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,16 +8,18 @@ namespace MWV
     public class WebViewManagerEvents
     {
         private MonoBehaviour _monoObject;
-
         private IWebView _webView;
-
         private Queue<WebViewManagerEvents.WebEvent> _webViewEvents;
-
         private IEnumerator _stateListenerEnum;
-
         private WebStates _replaceState;
-
         private WebViewManagerEvents.WebEvent _replaceEvent;
+
+        internal WebViewManagerEvents(MonoBehaviour monoObject, IWebView webView)
+        {
+            this._monoObject = monoObject;
+            this._webView = webView;
+            this._webViewEvents = new Queue<WebViewManagerEvents.WebEvent>();
+        }
 
         private WebViewManagerEvents.WebEvent Event
         {
@@ -27,11 +29,18 @@ namespace MWV
             }
         }
 
-        internal WebViewManagerEvents(MonoBehaviour monoObject, IWebView webView)
+        private IEnumerator EventManager()
         {
-            this._monoObject = monoObject;
-            this._webView = webView;
-            this._webViewEvents = new Queue<WebViewManagerEvents.WebEvent>();
+            while (true)
+            {
+                WebViewManagerEvents.WebEvent webEvent = this.Event;
+                if (webEvent != null && webEvent.State != WebStates.Empty)
+                    this._webViewEvents.Enqueue(webEvent);
+                if (this._webViewEvents.Count <= 0)
+                    yield return (object)null;
+                else
+                    this.CallEvent();
+            }
         }
 
         private void CallEvent()
@@ -45,176 +54,66 @@ namespace MWV
             switch (webEvent.State)
             {
                 case WebStates.Prepared:
-                    {
-                        if (this._webPagePreparedListener == null)
-                        {
-                            break;
-                        }
-                        this._webPagePreparedListener((Texture2D)webEvent.Arg);
-                        return;
-                    }
-                case WebStates.Started:
-                    {
-                        if (this._webPageStartedListener == null)
-                        {
-                            break;
-                        }
-                        this._webPageStartedListener(webEvent.GetStringArg);
-                        return;
-                    }
-                case WebStates.Loading:
-                    {
-                        if (this._webPageLoadListener == null)
-                        {
-                            break;
-                        }
-                        this._webPageLoadListener((int)webEvent.GetFloatArg);
-                        return;
-                    }
-                case WebStates.Finished:
-                    {
-                        if (this._webPageFinishedListener == null)
-                        {
-                            break;
-                        }
-                        this._webPageFinishedListener(webEvent.GetStringArg);
-                        return;
-                    }
-                case WebStates.Error:
-                    {
-                        PageErrorCode pageErrorCode = PageErrorCode.ERROR_UNKNOWN;
-                        try
-                        {
-                            Type type = typeof(PageErrorCode);
-                            float getFloatArg = -webEvent.GetFloatArg;
-                            pageErrorCode = (PageErrorCode)Enum.Parse(type, getFloatArg.ToString());
-                        }
-                        catch (Exception exception)
-                        {
-                        }
-                        if (this._webPageErrorListener == null)
-                        {
-                            break;
-                        }
-                        this._webPageErrorListener(pageErrorCode);
-                        return;
-                    }
-                case WebStates.HttpError:
-                    {
-                        if (this._webPageHttpErrorListener == null)
-                        {
-                            break;
-                        }
-                        this._webPageHttpErrorListener();
-                        return;
-                    }
-                case WebStates.ElementReceived:
-                    {
-                        if (this._webPageElementReceivedListener == null)
-                        {
-                            break;
-                        }
-                        string getStringArg = webEvent.GetStringArg;
-                        if (string.IsNullOrEmpty(getStringArg))
-                        {
-                            break;
-                        }
-                        string[] strArrays = getStringArg.Split(new char[] { '@' });
-                        bool flag = false;
-                        if ((int)strArrays.Length > 2 && !string.IsNullOrEmpty(strArrays[2]) && !strArrays[2].Equals("undefined"))
-                        {
-                            flag = true;
-                        }
-                        this._webPageElementReceivedListener(strArrays[0], strArrays[1], flag);
+                    if (this._webPagePreparedListener == null)
                         break;
-                    }
-                default:
+                    this._webPagePreparedListener((Texture2D)webEvent.Arg);
+                    break;
+                case WebStates.Started:
+                    if (this._webPageStartedListener == null)
+                        break;
+                    this._webPageStartedListener(webEvent.GetStringArg);
+                    break;
+                case WebStates.Loading:
+                    if (this._webPageLoadListener == null)
+                        break;
+                    this._webPageLoadListener((int)webEvent.GetFloatArg);
+                    break;
+                case WebStates.Finished:
+                    if (this._webPageFinishedListener == null)
+                        break;
+                    this._webPageFinishedListener(webEvent.GetStringArg);
+                    break;
+                case WebStates.Error:
+                    PageErrorCode pageErrorCode = PageErrorCode.ERROR_UNKNOWN;
+                    try
                     {
-                        return;
+                        pageErrorCode = (PageErrorCode)Enum.Parse(typeof(PageErrorCode), (-webEvent.GetFloatArg).ToString());
                     }
+                    catch (Exception ex)
+                    {
+                    }
+                    if (this._webPageErrorListener == null)
+                        break;
+                    this._webPageErrorListener(pageErrorCode);
+                    break;
+                case WebStates.HttpError:
+                    if (this._webPageHttpErrorListener == null)
+                        break;
+                    this._webPageHttpErrorListener();
+                    break;
+                case WebStates.ElementReceived:
+                    if (this._webPageElementReceivedListener == null)
+                        break;
+                    string getStringArg = webEvent.GetStringArg;
+                    if (string.IsNullOrEmpty(getStringArg))
+                        break;
+                    string[] strArray = getStringArg.Split('@');
+                    bool flag = false;
+                    if (strArray.Length > 2 && !string.IsNullOrEmpty(strArray[2]) && !strArray[2].Equals("undefined"))
+                        flag = true;
+                    this._webPageElementReceivedListener(strArray[0], strArray[1], flag);
+                    break;
             }
         }
 
-        private IEnumerator EventManager()
+        internal void SetEvent(WebStates state)
         {
-            while (true)
-            {
-                WebViewManagerEvents.WebEvent @event = this.Event;
-                if (@event != null && @event.State != WebStates.Empty)
-                {
-                    this._webViewEvents.Enqueue(@event);
-                }
-                if (this._webViewEvents.Count > 0)
-                {
-                    this.CallEvent();
-                }
-                else
-                {
-                    yield return null;
-                }
-            }
+            this._webViewEvents.Enqueue(new WebViewManagerEvents.WebEvent(state, (object)null));
         }
 
-        public void RemoveAllEvents()
+        internal void SetEvent(WebStates state, object arg)
         {
-            Delegate[] invocationList;
-            int i;
-            if (this._webPageStartedListener != null)
-            {
-                invocationList = this._webPageStartedListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageStartedListener -= (Action<string>)invocationList[i];
-                }
-            }
-            if (this._webPagePreparedListener != null)
-            {
-                invocationList = this._webPagePreparedListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPagePreparedListener -= (Action<Texture2D>)invocationList[i];
-                }
-            }
-            if (this._webPageLoadListener != null)
-            {
-                invocationList = this._webPageLoadListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageLoadListener -= (Action<int>)invocationList[i];
-                }
-            }
-            if (this._webPageFinishedListener != null)
-            {
-                invocationList = this._webPageFinishedListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageFinishedListener -= (Action<string>)invocationList[i];
-                }
-            }
-            if (this._webPageErrorListener != null)
-            {
-                invocationList = this._webPageErrorListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageErrorListener -= (Action<PageErrorCode>)invocationList[i];
-                }
-            }
-            if (this._webPageHttpErrorListener != null)
-            {
-                invocationList = this._webPageHttpErrorListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageHttpErrorListener -= (Action)invocationList[i];
-                }
-            }
-            if (this._webPageElementReceivedListener != null)
-            {
-                invocationList = this._webPageElementReceivedListener.GetInvocationList();
-                for (i = 0; i < (int)invocationList.Length; i++)
-                {
-                    this._webPageElementReceivedListener -= (Action<string, string, bool>)invocationList[i];
-                }
-            }
+            this._webViewEvents.Enqueue(new WebViewManagerEvents.WebEvent(state, arg));
         }
 
         internal void ReplaceEvent(WebStates replaceState, WebStates newState, object arg)
@@ -223,23 +122,11 @@ namespace MWV
             this._replaceEvent = new WebViewManagerEvents.WebEvent(newState, arg);
         }
 
-        internal void SetEvent(WebStates state)
-        {
-            this._webViewEvents.Enqueue(new WebViewManagerEvents.WebEvent(state, null));
-        }
-
-        internal void SetEvent(WebStates state, object arg)
-        {
-            this._webViewEvents.Enqueue(new WebViewManagerEvents.WebEvent(state, arg));
-        }
-
         public void StartListener()
         {
             this._webViewEvents.Clear();
             if (this._stateListenerEnum != null)
-            {
                 this._monoObject.StopCoroutine(this._stateListenerEnum);
-            }
             this._stateListenerEnum = this.EventManager();
             this._monoObject.StartCoroutine(this._stateListenerEnum);
         }
@@ -247,118 +134,50 @@ namespace MWV
         public void StopListener()
         {
             if (this._stateListenerEnum != null)
-            {
                 this._monoObject.StopCoroutine(this._stateListenerEnum);
-            }
             while (this._webViewEvents.Count > 0)
-            {
                 this.CallEvent();
-            }
         }
 
-        private event Action<string, string, bool> _webPageElementReceivedListener;
-
-        private event Action<PageErrorCode> _webPageErrorListener;
-
-        private event Action<string> _webPageFinishedListener;
-
-        private event Action _webPageHttpErrorListener;
-
-        private event Action<int> _webPageLoadListener;
-
-        private event Action<Texture2D> _webPagePreparedListener;
+        public void RemoveAllEvents()
+        {
+            if (this._webPageStartedListener != null)
+            {
+                foreach (Action<string> invocation in this._webPageStartedListener.GetInvocationList())
+                    this._webPageStartedListener -= invocation;
+            }
+            if (this._webPagePreparedListener != null)
+            {
+                foreach (Action<Texture2D> invocation in this._webPagePreparedListener.GetInvocationList())
+                    this._webPagePreparedListener -= invocation;
+            }
+            if (this._webPageLoadListener != null)
+            {
+                foreach (Action<int> invocation in this._webPageLoadListener.GetInvocationList())
+                    this._webPageLoadListener -= invocation;
+            }
+            if (this._webPageFinishedListener != null)
+            {
+                foreach (Action<string> invocation in this._webPageFinishedListener.GetInvocationList())
+                    this._webPageFinishedListener -= invocation;
+            }
+            if (this._webPageErrorListener != null)
+            {
+                foreach (Action<PageErrorCode> invocation in this._webPageErrorListener.GetInvocationList())
+                    this._webPageErrorListener -= invocation;
+            }
+            if (this._webPageHttpErrorListener != null)
+            {
+                foreach (Action invocation in this._webPageHttpErrorListener.GetInvocationList())
+                    this._webPageHttpErrorListener -= invocation;
+            }
+            if (this._webPageElementReceivedListener == null)
+                return;
+            foreach (Action<string, string, bool> invocation in this._webPageElementReceivedListener.GetInvocationList())
+                this._webPageElementReceivedListener -= invocation;
+        }
 
         private event Action<string> _webPageStartedListener;
-
-        public event Action<string, string, bool> WebPageElementReceivedListener
-        {
-            add
-            {
-                this._webPageElementReceivedListener += value;
-            }
-            remove
-            {
-                if (this._webPageElementReceivedListener != null)
-                {
-                    this._webPageElementReceivedListener -= value;
-                }
-            }
-        }
-
-        public event Action<PageErrorCode> WebPageErrorListener
-        {
-            add
-            {
-                this._webPageErrorListener += value;
-            }
-            remove
-            {
-                if (this._webPageErrorListener != null)
-                {
-                    this._webPageErrorListener -= value;
-                }
-            }
-        }
-
-        public event Action<string> WebPageFinishedListener
-        {
-            add
-            {
-                this._webPageFinishedListener += value;
-            }
-            remove
-            {
-                if (this._webPageFinishedListener != null)
-                {
-                    this._webPageFinishedListener -= value;
-                }
-            }
-        }
-
-        public event Action WebPageHttpErrorListener
-        {
-            add
-            {
-                this._webPageHttpErrorListener += value;
-            }
-            remove
-            {
-                if (this._webPageHttpErrorListener != null)
-                {
-                    this._webPageHttpErrorListener -= value;
-                }
-            }
-        }
-
-        public event Action<int> WebPageLoadListener
-        {
-            add
-            {
-                this._webPageLoadListener += value;
-            }
-            remove
-            {
-                if (this._webPageLoadListener != null)
-                {
-                    this._webPageLoadListener -= value;
-                }
-            }
-        }
-
-        public event Action<Texture2D> WebPagePreparedListener
-        {
-            add
-            {
-                this._webPagePreparedListener += value;
-            }
-            remove
-            {
-                if (this._webPagePreparedListener != null)
-                {
-                    this._webPagePreparedListener -= value;
-                }
-            }
-        }
 
         public event Action<string> WebPageStartedListener
         {
@@ -368,18 +187,126 @@ namespace MWV
             }
             remove
             {
-                if (this._webPageStartedListener != null)
-                {
-                    this._webPageStartedListener -= value;
-                }
+                if (this._webPageStartedListener == null)
+                    return;
+                this._webPageStartedListener -= value;
+            }
+        }
+
+        private event Action<Texture2D> _webPagePreparedListener;
+
+        public event Action<Texture2D> WebPagePreparedListener
+        {
+            add
+            {
+                this._webPagePreparedListener += value;
+            }
+            remove
+            {
+                if (this._webPagePreparedListener == null)
+                    return;
+                this._webPagePreparedListener -= value;
+            }
+        }
+
+        private event Action<int> _webPageLoadListener;
+
+        public event Action<int> WebPageLoadListener
+        {
+            add
+            {
+                this._webPageLoadListener += value;
+            }
+            remove
+            {
+                if (this._webPageLoadListener == null)
+                    return;
+                this._webPageLoadListener -= value;
+            }
+        }
+
+        private event Action<string> _webPageFinishedListener;
+
+        public event Action<string> WebPageFinishedListener
+        {
+            add
+            {
+                this._webPageFinishedListener += value;
+            }
+            remove
+            {
+                if (this._webPageFinishedListener == null)
+                    return;
+                this._webPageFinishedListener -= value;
+            }
+        }
+
+        private event Action<PageErrorCode> _webPageErrorListener;
+
+        public event Action<PageErrorCode> WebPageErrorListener
+        {
+            add
+            {
+                this._webPageErrorListener += value;
+            }
+            remove
+            {
+                if (this._webPageErrorListener == null)
+                    return;
+                this._webPageErrorListener -= value;
+            }
+        }
+
+        private event Action _webPageHttpErrorListener;
+
+        public event Action WebPageHttpErrorListener
+        {
+            add
+            {
+                this._webPageHttpErrorListener += value;
+            }
+            remove
+            {
+                if (this._webPageHttpErrorListener == null)
+                    return;
+                this._webPageHttpErrorListener -= value;
+            }
+        }
+
+        private event Action<string, string, bool> _webPageElementReceivedListener;
+
+        public event Action<string, string, bool> WebPageElementReceivedListener
+        {
+            add
+            {
+                this._webPageElementReceivedListener += value;
+            }
+            remove
+            {
+                if (this._webPageElementReceivedListener == null)
+                    return;
+                this._webPageElementReceivedListener -= value;
             }
         }
 
         internal class WebEvent
         {
             private WebStates _state;
-
             private object _arg;
+
+            public WebEvent(WebStates state, object arg)
+            {
+                this._state = state;
+                this._arg = arg;
+            }
+
+            public WebStates State
+            {
+                get
+                {
+                    return this._state;
+                }
+            }
 
             public object Arg
             {
@@ -393,27 +320,19 @@ namespace MWV
                 }
             }
 
-            public float GetFloatArg
-            {
-                get
-                {
-                    if (this._arg == null || !(this._arg is float))
-                    {
-                        return 0f;
-                    }
-                    return (float)this._arg;
-                }
-            }
-
             public int GetIntArg
             {
                 get
                 {
-                    if (this._arg == null || !(this._arg is int))
-                    {
-                        return 0;
-                    }
-                    return (int)this._arg;
+                    return this._arg == null || !(this._arg is int) ? 0 : (int)this._arg;
+                }
+            }
+
+            public float GetFloatArg
+            {
+                get
+                {
+                    return this._arg == null || !(this._arg is float) ? 0.0f : (float)this._arg;
                 }
             }
 
@@ -421,11 +340,7 @@ namespace MWV
             {
                 get
                 {
-                    if (this._arg == null || !(this._arg is long))
-                    {
-                        return (long)0;
-                    }
-                    return (long)this._arg;
+                    return this._arg == null || !(this._arg is long) ? 0L : (long)this._arg;
                 }
             }
 
@@ -433,26 +348,8 @@ namespace MWV
             {
                 get
                 {
-                    if (this._arg == null || !(this._arg is string))
-                    {
-                        return string.Empty;
-                    }
-                    return (string)this._arg;
+                    return this._arg == null || !(this._arg is string) ? string.Empty : (string)this._arg;
                 }
-            }
-
-            public WebStates State
-            {
-                get
-                {
-                    return this._state;
-                }
-            }
-
-            public WebEvent(WebStates state, object arg)
-            {
-                this._state = state;
-                this._arg = arg;
             }
         }
     }

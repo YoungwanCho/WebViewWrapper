@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace MWV
 {
@@ -6,14 +6,7 @@ namespace MWV
     {
         private const float DEFAULT_SUBMIT_TIME = 1f;
 
-        public abstract float SubmitTime
-        {
-            get;
-        }
-
-        protected AGaze()
-        {
-        }
+        public abstract float SubmitTime { get; }
 
         public abstract void Show(Vector3 position, Vector3 normal);
 

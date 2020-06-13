@@ -1,28 +1,25 @@
-using System;
+﻿using System;
 
 namespace MWV.Wrappers
 {
     internal interface INativeWrapperHelper
     {
-        string LibraryName
-        {
-            get;
-        }
-
-        IntPtr NativeHelperGetTexture(IntPtr mpInstance);
-
-        IntPtr NativeHelperGetUnityRenderCallback();
+        string LibraryName { get; }
 
         int NativeHelperInit();
 
-        void NativeHelperSetPixelsBuffer(IntPtr mpInstance, IntPtr buffer, int width, int height);
+        void NativeHelperUpdateIndex(IntPtr mpInstance);
 
         void NativeHelperSetTexture(IntPtr mpInstance, IntPtr texture);
 
-        void NativeHelperUpdateIndex(IntPtr mpInstance);
+        IntPtr NativeHelperGetTexture(IntPtr mpInstance);
+
+        void NativeHelperUpdateTexture(IntPtr mpInstance, IntPtr texture);
+
+        void NativeHelperSetPixelsBuffer(IntPtr mpInstance, IntPtr buffer, int width, int height);
 
         void NativeHelperUpdatePixelsBuffer(IntPtr mpInstance);
 
-        void NativeHelperUpdateTexture(IntPtr mpInstance, IntPtr texture);
+        IntPtr NativeHelperGetUnityRenderCallback();
     }
 }

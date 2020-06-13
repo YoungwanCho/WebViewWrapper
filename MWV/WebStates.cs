@@ -1,4 +1,4 @@
-namespace MWV
+﻿namespace MWV
 {
     public enum WebStates
     {
@@ -9,6 +9,6 @@ namespace MWV
         Finished,
         Error,
         HttpError,
-        ElementReceived
+        ElementReceived,
     }
 }

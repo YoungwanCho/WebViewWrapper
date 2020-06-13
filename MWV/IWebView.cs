@@ -1,90 +1,56 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace MWV
 {
     internal interface IWebView
     {
-        int ContentHeight
-        {
-            get;
-        }
+        GameObject OutputObject { get; set; }
 
-        bool DeviceKeyboard
-        {
-            set;
-        }
+        WebViewManagerEvents EventManager { get; }
 
-        WebViewManagerEvents EventManager
-        {
-            get;
-        }
+        WebStates State { get; }
 
-        byte[] FramePixels
-        {
-            get;
-        }
-
-        int Height
-        {
-            get;
-        }
-
-        bool IsReady
-        {
-            get;
-        }
-
-        GameObject OutputObject
-        {
-            get;
-            set;
-        }
-
-        WebStates State
-        {
-            get;
-        }
-
-        object StateValue
-        {
-            get;
-        }
-
-        Uri Url
-        {
-            get;
-        }
-
-        int Width
-        {
-            get;
-        }
+        object StateValue { get; }
 
         void AddWebListener(IWebListener listener);
 
-        void ClickTo(int x, int y);
+        void RemoveWebListener(IWebListener listener);
 
         void Load(Uri url);
 
         void Load(string data);
 
-        bool MoveBack();
-
-        bool MoveForward();
-
-        void Release();
-
-        void RemoveWebListener(IWebListener listener);
-
-        void ScrollBy(int x, int y);
-
-        void SetInputText(string text);
-
-        void CallFunction(string functionName, params string[] args);
-
         void UnLoad(bool resetTexture);
 
         void UnLoad();
+
+        void Release();
+
+        bool MoveForward();
+
+        bool MoveBack();
+
+        void SetInputText(string text);
+
+        void SetMotionEvent(MotionActions action, float x, float y);
+
+        void ClickTo(int x, int y);
+
+        void ScrollBy(int x, int y, float scrollTime = 0.5f);
+
+        Uri Url { get; }
+
+        bool IsReady { get; }
+
+        byte[] FramePixels { get; }
+
+        bool DeviceKeyboard { set; }
+
+        int Width { get; }
+
+        int Height { get; }
+
+        int ContentHeight { get; }
     }
 }

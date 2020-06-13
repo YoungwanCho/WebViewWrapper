@@ -1,4 +1,4 @@
-namespace MWV
+﻿namespace MWV
 {
     public interface IWebPageFinishedListener
     {
