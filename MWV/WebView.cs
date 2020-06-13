@@ -227,5 +227,10 @@ namespace MWV
                 return this._webView != null ? this._webView.ContentHeight : 0;
             }
         }
+
+        public void CallFunction(string functionName)
+        {
+            _webView.CallFunction(functionName);
+        }
     }
 }

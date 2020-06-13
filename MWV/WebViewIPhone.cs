@@ -336,5 +336,10 @@ namespace MWV
                 return this._pluginObj != IntPtr.Zero ? this._wrapper.WebContentHeight(this._pluginObj) : 0;
             }
         }
+
+        public void CallFunction(string functionName)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

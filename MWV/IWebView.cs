@@ -52,5 +52,7 @@ namespace MWV
         int Height { get; }
 
         int ContentHeight { get; }
+
+        void CallFunction(string functionName);
     }
 }

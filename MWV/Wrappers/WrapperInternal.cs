@@ -123,5 +123,9 @@ namespace MWV.Wrappers
         {
             return (object)null;
         }
+
+        public void WebCallFunction(IntPtr wObj, string functionName)
+        {
+        }
     }
 }

@@ -162,5 +162,10 @@ namespace MWV.Wrappers
         {
             return this._webViewWrapper.WebGetStateValue(wObj);
         }
+
+        public void WebCallFunction(IntPtr wObj, string functionName)
+        {
+            this._webViewWrapper.WebCallFunction(wObj, functionName);
+        }
     }
 }

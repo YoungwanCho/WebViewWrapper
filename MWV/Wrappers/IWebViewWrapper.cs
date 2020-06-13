@@ -29,5 +29,7 @@ namespace MWV.Wrappers
         WebStates WebGetState(IntPtr wObj);
 
         object WebGetStateValue(IntPtr wObj);
+
+        void WebCallFunction(IntPtr wObj, string functionName);
     }
 }

@@ -431,5 +431,13 @@ namespace MWV
                 return this._pluginObj != null ? this._pluginObj.Call<int>("exportContentHeight") : 0;
             }
         }
+
+        public void CallFunction(string functionName)
+        {
+            if (this._pluginObj != null)
+            {
+                this._pluginObj.Call("exportCallFunction", new object[] { functionName });
+            }
+        }
     }
 }
